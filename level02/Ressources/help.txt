@@ -1,0 +1,24 @@
+1) Есть подозрительный файл level02.pcap - Библиотека pсар - cлужит для создания программ анализа сетевых данных, поступающих на сетевую карту компьютера. Чтобы посмотреть сетевую активность используют программу Wireshark.
+2) Скачем подозрительный файл: scp -P 4242 level02@192.168.56.101:/home/user/level02/level02.pcap ./ на наш компьютер.
+3) chmod +r level02.pcap - иначе он не пропитается
+4) Установим kali linux, так как у нас нет прав доступа для установки Wireshark. 
+https://cdimage.kali.org/kali-2021.2/kali-linux-2021.2-live-amd64.iso
+5) Заходим в Kali linux и узнаем ip адрес с помощью команды ip -a
+6) Скопируем теперь файл на Kali linux: для этого включаем sudo ssh start на Kali linux
+7) На маке: scp level02.pcap kali@192.168.56.102:~/
+8) tshark -r level02.pcap -T fields -e data >> data - флаг -r говорит о том, что мы собираемся читать из файла, флаг -T fields устанавливает формат вывода через поля и с помощью флага -е хотим посмотреть поле data с информацией.
+9) Если сразу перевести командой в ascii код xxd -ps -r, то пароль ft_wandrNDRelfL0L не работает.
+https://stackoverflow.com/questions/5724761/ascii-hex-convert-in-bash - нашли команду здесь
+10) Оказалось, что мы пропустили невидимые символы, чтобы посмотреть их нужно сделать вот так:
+xxd -ps -r data | xxd
+11) По ASCII коду нашли, что 7f7f7f - del del del. 
+"Password: ft_wandr\x7f\x7f\7fNDRel\7fL0L, тогда получим пароль.
+Пароль: ft_waNDReL0L
+12) su flag02
+13) getflag
+Password: 
+Don't forget to launch getflag !
+flag02@SnowCrash:~$ getflag
+Check flag.Here is your token : kooda2puivaav1idi4f57q8iq
+
+Ответ: kooda2puivaav1idi4f57q8iq

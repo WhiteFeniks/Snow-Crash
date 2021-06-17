@@ -1,0 +1,24 @@
+1) По роджеру мы знали, что все пользователи и пароли к ним хранятся в папке /etc/passwd
+2) Посмотрели его и обнаружили пароль.
+flag01:42hDRfypTqqnw:3001:3001::/home/flag/flag01:/bin/bash
+3) Пытались зайти с паролем 42hDRfypTqqnw, но не смогли, значит он зашифрованный.
+4) В видео есть указание, что можно использовать программу john для дешифрования пароля.
+https://www.openwall.com/john/
+https://www.openwall.com/john/k/john-1.9.0.tar.xz
+5) Скачали потом по мануале из doc/INSTALL: cd src/
+6) Make clean generic  # сам подбирает систему
+7) Сохраняем наш пароль в файл password.txt
+8) ./john password.txt
+9) Получили:
+Loaded 1 password hash (descrypt, traditional crypt(3) [DES 64/64])
+Press 'q' or Ctrl-C to abort, almost any other key for status
+abcdefg          (?)
+1g 0:00:00:00 100% 2/3 100.0g/s 76800p/s 76800c/s 76800C/s veronica..bigman
+Use the "--show" option to display all of the cracked passwords reliably
+Session completed
+10) su flag01 + abcdefg
+11) getflag
+12) Получили:
+Check flag.Here is your token : f2av5il02puano7naaf6adaaf
+
+Ответ: f2av5il02puano7naaf6adaaf

